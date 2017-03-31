@@ -19,20 +19,21 @@ public class OperacionConListaTest {
 
 	static final String loc = Chooser.rutaArchivo();
 	static final String method = Chooser.rutaArchivo();
+	final OperacionConLista operacionConLista = new OperacionConLista();
+	final LeerArchivoTxt lectorArchivo = new LeerArchivoTxt();
+	final Estadistica estadistica = new Estadistica();
 	
 	@Test
 	public void testVerificarListasVacias() {
-		OperacionConLista operacionConLista = new OperacionConLista();
 		ListaEnlazada l1 = new ListaEnlazada();
 		ListaEnlazada l2 = new ListaEnlazada();
 		boolean resultado = operacionConLista.verificarListas(l1, l2);
-		System.out.println("El resultado de verificación de listas vacías es: "+ resultado);
+		System.out.println("El resultado de verificación de listas es: "+ resultado+ ", no tienen datos o difieren en tamaño");
 		assertEquals(false, resultado);
 	}
 
 	@Test
 	public void testCalcularDatosListaVacia() {
-		OperacionConLista operacionConLista = new OperacionConLista();
 		ListaEnlazada l1 = new ListaEnlazada();		
 		double total = operacionConLista.calcularDatosLista(l1);
 		System.out.println("La cantidad de datos en la lista es: "+ total);
@@ -41,9 +42,7 @@ public class OperacionConListaTest {
 	
 	@Test
 	public void testCalcularDatosLoc() {
-		OperacionConLista operacionConLista = new OperacionConLista();
 		ListaEnlazada l1 = new ListaEnlazada();
-		LeerArchivoTxt lectorArchivo = new LeerArchivoTxt();
 		try {
 			l1 = lectorArchivo.leerArchivoDouble(loc);
 		} catch (IOException e) {
@@ -51,16 +50,14 @@ public class OperacionConListaTest {
 			      "Advertencia",JOptionPane.WARNING_MESSAGE);
 		}
 		double cantDatos = operacionConLista.calcularDatosLista(l1);
-		System.out.println("La cantidad de datos en la lista es: "+ cantDatos);
+		System.out.println("La cantidad de datos en el archivo es: "+ cantDatos);
 		assertEquals(13.0, cantDatos, 0.05);
 	}
 	
 	@Test
 	public void testVerificarDatosArchivos() {
-		OperacionConLista operacionConLista = new OperacionConLista();
 		ListaEnlazada l1 = new ListaEnlazada();
 		ListaEnlazada l2 = new ListaEnlazada();
-		LeerArchivoTxt lectorArchivo = new LeerArchivoTxt();
 		try {
 			l1 = lectorArchivo.leerArchivoDouble(loc);
 			l2 = lectorArchivo.leerArchivoDouble(method);
@@ -69,95 +66,69 @@ public class OperacionConListaTest {
 			      "Advertencia",JOptionPane.WARNING_MESSAGE);
 		}
 		boolean resultado = operacionConLista.verificarListas(l1, l2);
-		System.out.println("El resultado de verificación de archivos es: "+ resultado);
+		System.out.println("El resultado de verificación de archivos es: "+ resultado+", son iguales en tamaño y tienen datos.");
 		assertEquals(true, resultado);
 	}
 
-	/*@Test
-	private void testVerificarListasArchivos() {
-		OperacionConLista operacionConLista = new OperacionConLista();
+	@Test
+	public void testDividirArchivos() {
 		ListaEnlazada l1 = new ListaEnlazada();
 		ListaEnlazada l2 = new ListaEnlazada();
-		LeerArchivoTxt lectorArchivo = new LeerArchivoTxt();
 		try {
 			l1 = lectorArchivo.leerArchivoDouble(loc);
 			l2 = lectorArchivo.leerArchivoDouble(method);
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, "Error: No se encontró el archivo", "Advertencia",
-					JOptionPane.WARNING_MESSAGE);
+			   JOptionPane.showMessageDialog(null,"Error: No se encontró el archivo",
+			      "Advertencia",JOptionPane.WARNING_MESSAGE);
 		}
-		boolean resultado = operacionConLista.verificarListas(l1, l2);
-		System.out.println("El resultado de verificación de las listas es: "+ resultado);
-		assertEquals(true, resultado);
+		ListaEnlazada listaResultado= new ListaEnlazada();
+		Nodo nodo = new Nodo();
+		listaResultado = operacionConLista.dividirListas(l1, l2);
+		nodo = listaResultado.primero();
+		System.out.println("El resultado de división para la primer fila es: "+ nodo.retorneDato());
+		assertEquals(6.0, nodo.retorneDato(), 0.05);
 	}
 
-	/*@Test
-	private void testDividirListas() {
-		OperacionConLista operacionConLista = new OperacionConLista();
+
+	@Test
+	public void testSacarLn() {
 		ListaEnlazada l1 = new ListaEnlazada();
 		ListaEnlazada l2 = new ListaEnlazada();
-		LeerArchivoTxt lectorArchivo = new LeerArchivoTxt();
 		try {
 			l1 = lectorArchivo.leerArchivoDouble(loc);
 			l2 = lectorArchivo.leerArchivoDouble(method);
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, "Error: No se encontró el archivo", "Advertencia",
-					JOptionPane.WARNING_MESSAGE);
+			   JOptionPane.showMessageDialog(null,"Error: No se encontró el archivo",
+			      "Advertencia",JOptionPane.WARNING_MESSAGE);
 		}
-		boolean resultado=false;
-		ListaEnlazada listaResultado = operacionConLista.dividirListas(l1, l2);
-		if(!listaResultado.esVacia()){
-			resultado = true;
-		}
+		ListaEnlazada listaResultado= new ListaEnlazada();
 		Nodo nodo = new Nodo();
+		listaResultado = operacionConLista.dividirListas(l1, l2);
+		listaResultado = operacionConLista.sacarLn(listaResultado);
 		nodo = listaResultado.primero();
-		System.out.println("El primer dato de la lista dividida es: "+ nodo.retorneDato());
-		assertEquals(true, resultado);
+		System.out.println("El resultado de ln para la primer fila es: "+ nodo.retorneDato());
+		assertEquals(1.79, nodo.retorneDato(), 0.05);		
 	}
 	
 	@Test
-	private void testSacarLn() {
-		OperacionConLista operacionConLista = new OperacionConLista();
+	public void testSacarLnMenosAvg() {
 		ListaEnlazada l1 = new ListaEnlazada();
-		LeerArchivoTxt lectorArchivo = new LeerArchivoTxt();
+		ListaEnlazada l2 = new ListaEnlazada();
 		try {
 			l1 = lectorArchivo.leerArchivoDouble(loc);
+			l2 = lectorArchivo.leerArchivoDouble(method);
 		} catch (IOException e) {
 			   JOptionPane.showMessageDialog(null,"Error: No se encontró el archivo",
 			      "Advertencia",JOptionPane.WARNING_MESSAGE);
 		}
-		boolean resultado=false;
-		ListaEnlazada listaResultado = operacionConLista.sacarLn(l1);
-		if(!listaResultado.esVacia()){
-			resultado = true;
-		}
+		ListaEnlazada listaResultado= new ListaEnlazada();
 		Nodo nodo = new Nodo();
+		listaResultado = operacionConLista.dividirListas(l1, l2);
+		listaResultado = operacionConLista.sacarLn(listaResultado);
+		double media = estadistica.calcularMediaLista(listaResultado);
+		listaResultado = operacionConLista.sacarLnMenosAvg(listaResultado, media);
 		nodo = listaResultado.primero();
-		System.out.println("El primer dato de la lista Ln es: "+ nodo.retorneDato());
-		assertEquals(true, resultado);	
+		System.out.println("El resultado de ln menos avg para la primer fila es: "+ nodo.retorneDato());
+		assertEquals(1.0196, nodo.retorneDato(), 0.05);		
 	}
-	
-	@Test
-	private void testSacarLnMenosAvg() {
-		OperacionConLista operacionConLista = new OperacionConLista();
-		Estadistica estadistica = new Estadistica();
-		ListaEnlazada l1 = new ListaEnlazada();
-		LeerArchivoTxt lectorArchivo = new LeerArchivoTxt();
-		try {
-			l1 = lectorArchivo.leerArchivoDouble(loc);
-		} catch (IOException e) {
-			   JOptionPane.showMessageDialog(null,"Error: No se encontró el archivo",
-			      "Advertencia",JOptionPane.WARNING_MESSAGE);
-		}
-		boolean resultado=false;
-		double media = estadistica.calcularMediaLista(l1);
-		ListaEnlazada listaResultado = operacionConLista.sacarLnMenosAvg(l1, media);
-		if(!listaResultado.esVacia()){
-			resultado = true;
-		}
-		Nodo nodo = new Nodo();
-		nodo = listaResultado.primero();
-		System.out.println("El primer dato de la lista Ln menos avg es: "+ nodo.retorneDato());
-		assertEquals(true, resultado);	
-	}*/
 }
